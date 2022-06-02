@@ -1,0 +1,19 @@
+#root,
+body,
+html {
+    height: 100%;
+}
+
+.ant-layout {
+    display: flex;
+    height: 100% !important;
+}
+
+.app-screen {
+    display: flex;
+    background-color: white;
+    height: 100% !important;
+    border-radius: 12px;
+    margin: 18px;
+    margin-bottom: 0px;
+}
