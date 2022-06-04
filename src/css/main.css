@@ -16,4 +16,6 @@ html {
     border-radius: 12px;
     margin: 18px;
     margin-bottom: 0px;
+    padding: 12px;
+    justify-content: center;
 }

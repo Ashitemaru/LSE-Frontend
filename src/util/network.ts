@@ -7,8 +7,6 @@ const uFetch = async (
     timeout?: number, // In miliseconds
     postBody?: object,
 ) => {
-    console.log("uFetch called!");
-
     // Initialize timeout controller
     const controller = new AbortController();
     const timeoutEvent = setTimeout(() => {
