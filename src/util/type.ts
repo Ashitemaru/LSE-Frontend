@@ -99,14 +99,64 @@ export interface RecordStageUnknown extends RecordBase {
 
 export type Record = RecordStageOne | RecordStageTwo | RecordStageUnknown;
 
+export interface Clause {
+    t: string; // 条
+    k?: string; // 款
+    x?: string; // 项
+}
+
+export interface Reference {
+    name: string; // 法律法条引用名称
+    clauses: Clause[]; // 法律法条引用条款
+}
+
 export interface Detail {
     content: string; // 案件基本情况
+    references: Reference[]; // 法律法条引用
 }
 
 export interface Analysis {
     content: string; // 裁判分析过程
+    references: Reference[]; // 法律法条引用
 }
 
 export interface Result {
     content: string; // 判决结果
+    references: Reference[]; // 法律法条引用
+}
+
+export interface Judge {
+    type: "法官成员" | "审判组织成员";
+    name: string;
+    role: string;
+}
+
+export interface Event {
+    origin: string; // 段落来源
+    content: string; // 原文
+    date?: string; // 具体时间
+}
+
+export interface Footer {
+    date?: string; // 结案年月日
+    year?: string; // 结案年度
+    month?: string; // 结案月份
+    judges: Judge[]; // 法官
+}
+
+export interface File {
+    id: string; // 文件编号
+    title: string; // 文件标题
+    content: string; // 文件正文
+    court: Court; // 法院信息
+    document: Document; // 文书信息
+    _case?: Case; // 案件信息
+    persons?: Persons; // 当事人
+    record?: Record; // 诉讼记录
+    detail?: Detail; // 案件基本情况
+    analysis?: Analysis; // 裁判分析过程
+    result?: Result; // 判决结果
+    timeline: Event[]; // 时间线
+    footer?: Footer; // 文尾
+    featureVector: number[]; // 文本特征向量
 }

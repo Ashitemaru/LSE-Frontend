@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BACKEND_URL_PREFIX } from "../constants/strings";
 import { uFetch } from "../util/network";
-import { message, Skeleton, Empty, Button, Pagination } from "antd";
+import { message, Pagination, List, Spin, Divider, Input } from "antd";
 import {
     NULL_KEYWORD,
+    RESULT,
     SEARCH_CAPTION_MID1,
     SEARCH_CAPTION_MID2,
     SEARCH_CAPTION_PRE,
@@ -13,25 +14,22 @@ import {
     UNUNIFIED_TOTAL_RES
 } from "../constants/captions";
 import { parseURLParam } from "../util/url";
+import ResultListItem from "./ResultListItem";
+import { CaseAbstract } from "./type";
 
-interface SearchResult {
-    id: number,
-    title: string,
-    content: string,
-}
+const { Search } = Input;
 
 const ResultScreen: React.FC = () => {
     const navigate = useNavigate();
 
-    const resultRef = useRef<SearchResult[]>([]);
+    const resultRef = useRef<CaseAbstract[]>([]);
     const [resultStamp, setStamp] = useState(new Date());
 
     const [refreshing, setRefreshing] = useState(true);
-    const [shouldForceRefresh, setForceRefresh] = useState(false);
 
     const [total, setTotal] = useState(-1);
     const [pageNum, setPageNum] = useState(0);
-    const [itemPerPage, setItemPerPage] = useState(10);
+    const [itemPerPage, setItemPerPage] = useState(5);
 
     // Parse the URL params
     const URLParam: Record<string, string> = parseURLParam(useLocation().search).result;
@@ -57,7 +55,6 @@ const ResultScreen: React.FC = () => {
                     setTotal(res.count);
                 } else if (res.count != total) {
                     message.error(UNUNIFIED_TOTAL_RES);
-                    setForceRefresh(true); // Force user to refresh the page
                     setRefreshing(false);
                     resultRef.current = [];
                     return;
@@ -65,10 +62,10 @@ const ResultScreen: React.FC = () => {
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 resultRef.current = res.hits.map((val: any) => ({
-                    id: parseInt(val.id as string, 10),
-                    title: val.id,
-                    content: val.content,
-                }));
+                    ...val,
+                    id: parseInt(val.id, 10),
+                    score: parseFloat(val.score),
+                }) as CaseAbstract);
 
                 setStamp(new Date());
                 setRefreshing(false);
@@ -127,17 +124,48 @@ const ResultScreen: React.FC = () => {
     }, [pageNum, itemPerPage]);
 
     return (
-        <div className="app-screen">
-            {refreshing ? (
-                <Skeleton active />
-            ) : (
-                shouldForceRefresh || resultRef.current.length === 0 ? (
-                    <Empty />
+        <div
+            className="app-screen"
+            style={{
+                justifyContent: refreshing ? "center" : undefined
+            }}>
+            {
+                refreshing ? (
+                    <Spin tip="Loading..." size="large" />
                 ) : (
-                    <div style={{ flexDirection: "column", display: "flex" }}>
-                        {resultRef.current.map((res) => (
-                            <div key={res.id}>{res.title}</div>
-                        ))}
+                    <div>
+                        <Search
+                            placeholder={decodeURI(URLParam.keyword)}
+                            enterButton
+                            onSearch={(keyword: string) => {
+                                if (keyword === "") {
+                                    message.error(NULL_KEYWORD);
+                                    return;
+                                }
+
+                                // We reset the href instead of using navigate to force refresh the page
+                                window.location.href = `/result?keyword=${keyword}`;
+                            }}
+                            style={{
+                                height: "20px",
+                                width: "30vw",
+                                margin: "12px",
+                            }}
+                        />
+                        <Divider>{RESULT}</Divider>
+                        <List
+                            itemLayout="vertical"
+                            dataSource={resultRef.current}
+                            renderItem={(item: CaseAbstract) => (
+                                <ResultListItem
+                                    item={item}
+                                    refreshing={refreshing}
+                                />
+                            )}
+                            style={{
+                                margin: "18px",
+                            }}
+                        />
                         <Pagination
                             total={total}
                             showSizeChanger
@@ -155,10 +183,15 @@ const ResultScreen: React.FC = () => {
                                     setItemPerPage(pageSize);
                                 }
                             }}
+                            style={{
+                                margin: "18px",
+                            }}
+                            pageSizeOptions={[5, 10, 20]}
+                            defaultPageSize={5}
                         />
                     </div>
                 )
-            )}
+            }
         </div>
     );
 };

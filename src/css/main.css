@@ -2,20 +2,24 @@
 body,
 html {
     height: 100%;
+    min-height: 100%;
 }
 
 .ant-layout {
-    display: flex;
-    height: 100% !important;
+    min-height: 100% !important;
 }
 
 .app-screen {
     display: flex;
+    flex-direction: column;
     background-color: white;
-    height: 100% !important;
     border-radius: 12px;
     margin: 18px;
     margin-bottom: 0px;
     padding: 12px;
-    justify-content: center;
+    min-height: calc(100vh - 70px - 18px);
+}
+
+.ant-layout-footer {
+    height: 70px;
 }
