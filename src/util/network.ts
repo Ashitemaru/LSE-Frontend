@@ -4,8 +4,8 @@ import { USER_AGENT } from "../constants/strings";
 const uFetch = async (
     url: string,
     param: Record<string, string>,
-    timeout?: number, // In miliseconds
     postBody?: object,
+    timeout?: number, // In miliseconds
 ) => {
     // Initialize timeout controller
     const controller = new AbortController();

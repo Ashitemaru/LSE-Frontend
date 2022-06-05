@@ -157,10 +157,7 @@ const ResultScreen: React.FC = () => {
                             itemLayout="vertical"
                             dataSource={resultRef.current}
                             renderItem={(item: CaseAbstract) => (
-                                <ResultListItem
-                                    item={item}
-                                    refreshing={refreshing}
-                                />
+                                <ResultListItem item={item} />
                             )}
                             style={{
                                 margin: "18px",

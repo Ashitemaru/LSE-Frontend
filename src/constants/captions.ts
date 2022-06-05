@@ -1,5 +1,6 @@
 export const NULL_KEYWORD = "用于搜索的字符串不能为空";
 export const UNDEF_URL_PARAM_KEYWORD = "结果页面 URL 必须包含 keyword 字段";
+export const UNDEF_URL_PARAM_ID = "案件详情页面 URL 必须包含 id 字段";
 
 export const UNUNIFIED_TOTAL_RES = "网页缓存数据与平台不一致，请刷新网页重试";
 
@@ -12,6 +13,9 @@ export const UNKNOWN_PROVINCE = "未知";
 export const UNKNOWN_CASE_NAME = "未知案件编号";
 export const UNKNOWN_COURT_NAME = "未知法院名称";
 export const UNKNOWN_DOCUMENT_NAME = "未知文书名称";
+export const UNKNOWN_NAME = "【姓名未知】";
+
+export const NULL_ABSTRACT = "暂无信息摘要";
 
 export const PROSECUTOR = "起诉方";
 export const DEFENDANT = "应诉方";
@@ -24,3 +28,7 @@ export const NO_REPRESENTATIVE = "无代理人信息";
 export const READ_DETAIL = "查看详情";
 export const RESULT = "搜索结果";
 export const INFO_ABSTRACT = "消息摘要";
+export const REFRESH = "刷新页面";
+
+export const SUCCESS_GET_DETAIL = "成功获取文书详细信息";
+export const FAIL_GET_DETAIL = "获取文书详细信息失败，请刷新重试";
