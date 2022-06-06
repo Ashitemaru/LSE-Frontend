@@ -1,17 +1,24 @@
-import { Alert, Divider, List, message, Spin, Tabs } from "antd";
+import { Alert, Card, Divider, Empty, List, message, Spin, Tabs, Tag, Typography } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Abstract from "../components/Abstract";
+import KVPair from "../components/KVPair";
 import { FAIL_GET_DETAIL, SUCCESS_GET_DETAIL, UNDEF_URL_PARAM_ID } from "../constants/captions";
 import { BACKEND_URL_PREFIX } from "../constants/strings";
+import { parseCHNDate } from "../util/date";
 import { uFetch } from "../util/network";
-import { File } from "../util/type";
+import { File, Reference } from "../util/type";
 import CaseCard from "./CaseCard";
 import CourtCard from "./CourtCard";
 import DocumentCard from "./DocumentCard";
+import LawReference from "./LawReference";
 import PersonList from "./PersonList";
+import PrevCard from "./PrevCard";
+import RecordBasicCard from "./RecordBasicCard";
+import TimelineCard from "./TimelineCard";
 
 const { TabPane } = Tabs;
+const { Text, Title } = Typography;
 
 const DetailScreen: React.FC = () => {
     const URLParam = useParams();
@@ -82,7 +89,7 @@ const DetailScreen: React.FC = () => {
                                 footer={null}
                             />
                         </List>
-                        <Tabs type="card" defaultActiveKey="3">
+                        <Tabs type="card" defaultActiveKey="6">
                             <TabPane key={1} tab="基本信息">
                                 <div style={{ flexDirection: "column", display: "flex" }}>
                                     <CourtCard item={detailRef.current?.court || {}} />
@@ -116,9 +123,113 @@ const DetailScreen: React.FC = () => {
                                 </div>
                             </TabPane>
                             <TabPane key={3} tab="诉讼记录">
-                                121121121
+                                <RecordBasicCard item={detailRef.current?.record || {}} />
+                                <Divider>{"诉讼记录"}</Divider>
+                                <Typography style={{ marginRight: "12px", marginLeft: "12px" }}>
+                                    {detailRef.current?.record?.description
+                                        ? <Text>{detailRef.current?.record?.description}</Text>
+                                        : <Text type="secondary">{"暂无诉讼记录"}</Text>}
+                                </Typography>
                             </TabPane>
-                        </Tabs >
+                            <TabPane key={4} tab="案件细节">
+                                {(detailRef.current?.detail?.references || []).length > 0 && <>
+                                    <Divider>{"依据法条"}</Divider>
+                                    <LawReference refs={detailRef.current?.detail?.references as Reference[]} />
+                                </>}
+                                {detailRef.current?.detail?.content && <>
+                                    <Divider>{"案件描述与情况"}</Divider>
+                                    <Typography style={{ marginRight: "12px", marginLeft: "12px" }}>
+                                        <Text>{detailRef.current?.detail?.content}</Text>
+                                    </Typography>
+                                </>}
+                            </TabPane>
+                            <TabPane key={5} tab="案件分析与审理结果">
+                                {(detailRef.current?.analysis?.references || []).length > 0 && <>
+                                    <Divider>{"分析依据法条"}</Divider>
+                                    <LawReference refs={detailRef.current?.analysis?.references as Reference[]} />
+                                </>}
+                                {detailRef.current?.analysis?.content && <>
+                                    <Divider>{"裁判分析过程"}</Divider>
+                                    <Typography style={{ marginRight: "12px", marginLeft: "12px" }}>
+                                        <Text>{detailRef.current?.analysis?.content}</Text>
+                                    </Typography>
+                                </>}
+                                {(detailRef.current?.result?.references || []).length > 0 && <>
+                                    <Divider>{"判决依据法条"}</Divider>
+                                    <LawReference refs={detailRef.current?.result?.references as Reference[]} />
+                                </>}
+                                {detailRef.current?.result?.content && <>
+                                    <Divider>{"判决结果"}</Divider>
+                                    <Typography style={{ marginRight: "12px", marginLeft: "12px" }}>
+                                        <Text>{detailRef.current?.result?.content}</Text>
+                                    </Typography>
+                                </>}
+                            </TabPane>
+                            <TabPane key={6} tab="案件审理时间线">
+                                {detailRef.current?.footer?.date && (
+                                    <Card title="本次审理情况" size="small" style={{ margin: "12px" }}>
+                                        <Tag color="green">{"已结案"}</Tag>
+                                        <Typography style={{ marginTop: "12px" }}>
+                                            <KVPair k="结案日期" v={detailRef.current?.footer?.date} />
+                                        </Typography>
+                                    </Card>
+                                )}
+                                {(detailRef.current?.record?.prev || []).length > 0 && <>
+                                    <Divider>{"前期审理信息"}</Divider>
+                                    <List
+                                        dataSource={detailRef.current?.record?.prev}
+                                        itemLayout="horizontal"
+                                        renderItem={(item, ind) => (
+                                            <List.Item>
+                                                <PrevCard item={item} ind={ind} />
+                                            </List.Item>
+                                        )}
+                                        split={false}
+                                    />
+                                </>}
+                                {(detailRef.current?.timeline || []).length > 0 && <>
+                                    <Divider>{"审理流程重要时间节点"}</Divider>
+                                    <List
+                                        dataSource={
+                                            detailRef.current?.timeline
+                                                .sort((a, b) => {
+                                                    const _a = parseCHNDate(a.date || "");
+                                                    const _b = parseCHNDate(b.date || "");
+                                                    return (+_b) - (+_a);
+                                                })
+                                        }
+                                        itemLayout="horizontal"
+                                        renderItem={(item, ind) => (
+                                            <List.Item>
+                                                <TimelineCard item={item} ind={ind} />
+                                            </List.Item>
+                                        )}
+                                        split={false}
+                                    />
+                                </>}
+                            </TabPane>
+                            <TabPane key={7} tab="裁判人员信息">
+                                {(detailRef.current?.footer?.judges || []).length > 0 ? <PersonList
+                                    list={detailRef.current?.footer?.judges.map((val) => ({
+                                        name: val.name,
+                                        status: val.role,
+                                        type: val.type,
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    })) as any[]}
+                                    isRepresentative={false}
+                                /> : <Empty />}
+                            </TabPane>
+                            <TabPane key={8} tab="文书完整内容">
+                                <Typography style={{ marginRight: "12px", marginLeft: "12px" }}>
+                                    {detailRef.current?.title && <Title level={4}>
+                                        {detailRef.current?.title}
+                                    </Title>}
+                                    {detailRef.current?.content && <Text>
+                                        {detailRef.current?.content}    
+                                    </Text>}
+                                </Typography>
+                            </TabPane>
+                        </Tabs>
                     </div >
                 )
             }
