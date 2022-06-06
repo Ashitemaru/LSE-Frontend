@@ -9,8 +9,8 @@ import {
     UNUNIFIED_TOTAL_RES
 } from "../constants/captions";
 import { parseURLParam } from "../util/url";
-import ResultListItem from "./ResultListItem";
-import { CaseAbstract } from "./type";
+import ResultListItem from "../components/ResultListItem";
+import { CaseAbstract } from "../util/type";
 import "antd/dist/antd.less";
 
 const { Search } = Input;
@@ -212,7 +212,7 @@ const ResultScreen: React.FC = () => {
                             />
                             <Button
                                 style={{ marginLeft: "8px" }}
-                                onClick={() => console.log("Click!")}
+                                onClick={() => window.location.href = "/similar"}
                                 type="primary">
                                 {"切换到类案搜索"}
                             </Button>

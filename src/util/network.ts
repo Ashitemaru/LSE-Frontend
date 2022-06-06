@@ -17,6 +17,7 @@ const uFetch = async (
     const defaultInit = {
         headers: {
             "User-Agent": USER_AGENT,
+            "Content-Type": "application/json",
         },
         signal: controller.signal,
         method: postBody === undefined ? "GET" : "POST",

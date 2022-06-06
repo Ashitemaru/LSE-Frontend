@@ -7,6 +7,7 @@ import "./css/main.css";
 import DetailScreen from "./detail/DetailScreen";
 import IntroScreen from "./intro/IntroScreen";
 import ResultScreen from "./result/ResultScreen";
+import SimResultScreen from "./similar/SimResultScreen";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -37,6 +38,7 @@ const App: React.FC = () => {
                         <Routes>
                             <Route path="/" element={<IntroScreen />} />
                             <Route path="/result" element={<ResultScreen />} />
+                            <Route path="/similar" element={<SimResultScreen />} />
                             <Route path="/detail/:id" element={<DetailScreen />} />
                         </Routes>
                     </BrowserRouter>

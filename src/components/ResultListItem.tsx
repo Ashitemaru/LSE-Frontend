@@ -2,14 +2,16 @@ import { Space, Typography } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { INFO_ABSTRACT, NULL_ABSTRACT, READ_DETAIL } from "../constants/captions";
-import { CaseAbstract } from "./type";
 import { StarOutlined } from "@ant-design/icons";
-import Abstract from "../components/Abstract";
+import Abstract from "./Abstract";
 
 const { Paragraph, Text, Title } = Typography;
 
 interface ResultListItemProp {
-    item: CaseAbstract,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    item: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    footer?: any,
 }
 
 const ResultListItem: React.FC<ResultListItemProp> = (props: ResultListItemProp) => {
@@ -57,12 +59,15 @@ const ResultListItem: React.FC<ResultListItemProp> = (props: ResultListItemProp)
             ]}
             item={props.item}
             footer={(
-                <Typography style={{ margin: "12px" }}>
-                    <Title level={5}>{INFO_ABSTRACT}</Title>
-                    <Paragraph>
-                        {getHighlightedText(props.item?.content || NULL_ABSTRACT)}
-                    </Paragraph>
-                </Typography>
+                <>
+                    <Typography style={{ margin: "12px" }}>
+                        <Title level={5}>{INFO_ABSTRACT}</Title>
+                        <Paragraph>
+                            {getHighlightedText(props.item?.content || NULL_ABSTRACT)}
+                        </Paragraph>
+                    </Typography>
+                    {props.footer}
+                </>
             )}
             style={{ margin: "12px" }}
         />
