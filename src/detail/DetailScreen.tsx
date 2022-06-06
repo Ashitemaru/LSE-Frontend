@@ -89,7 +89,7 @@ const DetailScreen: React.FC = () => {
                                 footer={null}
                             />
                         </List>
-                        <Tabs type="card" defaultActiveKey="6">
+                        <Tabs type="card" defaultActiveKey="1">
                             <TabPane key={1} tab="基本信息">
                                 <div style={{ flexDirection: "column", display: "flex" }}>
                                     <CourtCard item={detailRef.current?.court || {}} />

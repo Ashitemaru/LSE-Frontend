@@ -12,42 +12,40 @@ const { Footer, Sider, Content } = Layout;
 
 const App: React.FC = () => {
     return (
-        <React.StrictMode>
-            <Layout>
-                <Sider width={200} className="site-layout-background" theme="dark">
-                    <div style={{
-                        background: "#EEEEEE",
-                        margin: "12px",
-                        borderRadius: "8px",
+        <Layout>
+            <Sider width={200} className="site-layout-background" theme="dark">
+                <div style={{
+                    background: "#EEEEEE",
+                    margin: "12px",
+                    borderRadius: "8px",
+                }}>
+                    <p style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        alignSelf: "center",
+                        textAlign: "center",
+                        marginTop: "18px",
+                        fontFamily: "consolas",
                     }}>
-                        <p style={{
-                            fontSize: 20,
-                            fontWeight: "bold",
-                            alignSelf: "center",
-                            textAlign: "center",
-                            marginTop: "18px",
-                            fontFamily: "consolas",
-                        }}>
                             Law Search Engine
-                        </p>
-                    </div>
-                </Sider>
-                <Layout>
-                    <Content>
-                        <BrowserRouter>
-                            <Routes>
-                                <Route path="/" element={<IntroScreen />} />
-                                <Route path="/result" element={<ResultScreen />} />
-                                <Route path="/detail/:id" element={<DetailScreen />} />
-                            </Routes>
-                        </BrowserRouter>
-                    </Content>
-                    <Footer style={{ textAlign: "center" }}>
-                        {PAGE_FOOTER}
-                    </Footer>
-                </Layout>
+                    </p>
+                </div>
+            </Sider>
+            <Layout>
+                <Content>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/" element={<IntroScreen />} />
+                            <Route path="/result" element={<ResultScreen />} />
+                            <Route path="/detail/:id" element={<DetailScreen />} />
+                        </Routes>
+                    </BrowserRouter>
+                </Content>
+                <Footer style={{ textAlign: "center" }}>
+                    {PAGE_FOOTER}
+                </Footer>
             </Layout>
-        </React.StrictMode>
+        </Layout>
     );
 };
 

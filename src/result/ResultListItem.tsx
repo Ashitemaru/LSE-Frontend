@@ -15,7 +15,7 @@ interface ResultListItemProp {
 const ResultListItem: React.FC<ResultListItemProp> = (props: ResultListItemProp) => {
     const navigate = useNavigate();
 
-    const IconText = ({ icon, text }: { icon: React.FC; text: number }) => (
+    const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
         <Space>
             {React.createElement(icon)}
             {text}
@@ -49,7 +49,11 @@ const ResultListItem: React.FC<ResultListItemProp> = (props: ResultListItemProp)
                     onClick={() => navigate(`/detail/${props.item.id}`)}>
                     {READ_DETAIL}
                 </a>,
-                <IconText icon={StarOutlined} text={props.item.score} key="list-vertical-star-o" />
+                <IconText
+                    icon={StarOutlined}
+                    text={Number.isNaN(props.item.score) ? "相似度评分不适用" : ("" + props.item.score)}
+                    key="list-vertical-star-o"
+                />
             ]}
             item={props.item}
             footer={(

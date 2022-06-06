@@ -3,7 +3,7 @@ import { USER_AGENT } from "../constants/strings";
 
 const uFetch = async (
     url: string,
-    param: Record<string, string>,
+    param: Record<string, string | undefined>,
     postBody?: object,
     timeout?: number, // In miliseconds
 ) => {
@@ -30,6 +30,7 @@ const uFetch = async (
     // Concat the URL
     const serializedParam =
         Object.keys(param)
+            .filter((key: string) => param[key] !== undefined)
             .map((key: string) => key + "=" + param[key])
             .join("&");
     const paramedURL = url + (serializedParam === "" ? "" : "?" + serializedParam);
