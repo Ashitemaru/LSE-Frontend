@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BACKEND_URL_PREFIX } from "../constants/strings";
 import { uFetch } from "../util/network";
-import { message, Pagination, List, Spin, Divider, Input, Dropdown, Menu, Tag, Typography } from "antd";
+import { message, Pagination, List, Spin, Divider, Input, Dropdown, Menu, Tag, Typography, Segmented, Button, Form, Row, Col } from "antd";
 import {
     NULL_KEYWORD,
     RESULT,
@@ -11,6 +11,7 @@ import {
 import { parseURLParam } from "../util/url";
 import ResultListItem from "./ResultListItem";
 import { CaseAbstract } from "./type";
+import "antd/dist/antd.less";
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -22,8 +23,7 @@ interface SearchSuggest {
 
 enum SearchType {
     KEYWORD = 0, // 关键词查找
-    SIMILAR = 1, // 类案查找
-    ADVANCED = 2, // 高级查找
+    ADVANCED = 1, // 高级查找
 }
 
 const ResultScreen: React.FC = () => {
@@ -43,9 +43,16 @@ const ResultScreen: React.FC = () => {
     const [pageNum, setPageNum] = useState(0);
     const [itemPerPage, setItemPerPage] = useState(5);
 
+    const [advancedSearch, setAdvanced] = useState(false);
+    const [advancedForm] = Form.useForm();
+
     const advancedKeyList = [
         "province", "city", "court", "type", "name", "year",
         "cause", "person", "judge", "reference"
+    ];
+    const advancedKeyListCHN = [
+        "省份", "城市", "法院", "文书类型", "案件名称", "年份",
+        "案由", "当事人", "法官", "引用法条"
     ];
 
     // Parse the URL params
@@ -86,7 +93,7 @@ const ResultScreen: React.FC = () => {
         resultRef.current = [];
         suggestRef.current = [];
 
-        const suffixList = ["/demo/search", "/demo/search/similar", "/demo/search/advanced"];
+        const suffixList = ["/demo/search", "/demo/search/advanced"];
 
         const param: Record<string, string> = {
             limit: "" + itemPerPage,
@@ -163,6 +170,30 @@ const ResultScreen: React.FC = () => {
         }
     }, [pageNum, itemPerPage]);
 
+    const dropDownInner = suggestRef.current
+        .filter((_, ind) => ind < 10)
+        .map((sug, ind) => ({
+            key: ind,
+            label: <div
+                onClick={() => {
+                    window.location.href = `/result?${sug.type}=${sug.keyword}`;
+                }}
+                style={{ display: "flex" }}>
+                <Tag
+                    color={getSuggestTypeColor(sug.type)}
+                    style={{ marginRight: "8px" }}>
+                    {translateSuggestType(sug.type)}
+                </Tag>
+                <Text>{sug.keyword}</Text>
+            </div>
+        }))
+        .concat([{
+            key: 10,
+            label: <Text type="secondary">
+                {"点击上方各推荐项将会在该标签下使用高级搜索而非关键词搜索"}
+            </Text>
+        }]);
+
     return (
         <div
             className="app-screen"
@@ -174,36 +205,79 @@ const ResultScreen: React.FC = () => {
                     <Spin tip="Loading..." size="large" />
                 ) : (
                     <div>
-                        <div
+                        <div style={{ margin: "12px", marginBottom: "0px" }}>
+                            <Segmented
+                                options={["关键词搜索", "高级搜索"]}
+                                onChange={(tip) => setAdvanced(tip === "高级搜索")}
+                            />
+                            <Button
+                                style={{ marginLeft: "8px" }}
+                                onClick={() => console.log("Click!")}
+                                type="primary">
+                                {"切换到类案搜索"}
+                            </Button>
+                        </div>
+                        {advancedSearch ? (
+                            <div style={{ margin: "12px", marginTop: "18px" }}>
+                                <Divider>{"高级搜索表单"}</Divider>
+                                <Form
+                                    onFinish={(form) => {
+                                        const navParam: string[] = [];
+                                        advancedKeyListCHN.forEach((key, ind) => {
+                                            if (form[key] !== undefined) {
+                                                navParam.push(`${advancedKeyList[ind]}=${form[key]}`);
+                                            }
+                                        });
+
+                                        if (navParam.length === 0) {
+                                            message.error("高级搜索至少需要一个非空字段");
+                                            advancedForm.resetFields();
+                                            return;
+                                        }
+
+                                        window.location.href = `/result?${navParam.join("&")}`;
+                                    }}
+                                    form={advancedForm}
+                                    className="ant-advanced-search-form">
+                                    <Row gutter={24}>
+                                        {advancedKeyListCHN.map((name, ind) => (
+                                            <Col key={ind} span={8}>
+                                                <Form.Item label={name} name={name}>
+                                                    <Input placeholder={
+                                                        `请输入${name}${
+                                                            ["当事人", "法官", "引用法条"].indexOf(name) > 0
+                                                                ? "，多项之间用 ',' 隔开"
+                                                                : ""
+                                                        }`
+                                                    } />
+                                                </Form.Item>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                    <Row>
+                                        <Col span={24} style={{ textAlign: "right" }}>
+                                            <Button type="primary" htmlType="submit">
+                                                {"高级搜索"}
+                                            </Button>
+                                            <Button
+                                                style={{ margin: "0 8px" }}
+                                                onClick={() => {
+                                                    advancedForm.resetFields();
+                                                }}>
+                                                {"清除填写内容"}
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </Form>
+                            </div>
+                        ) : (<div
                             onFocus={() => setVisible(true)}
                             onBlur={() => setVisible(false)}>
                             <Dropdown
                                 overlay={<Menu
                                     items={
                                         suggestRef.current.length ? (
-                                            suggestRef.current
-                                                .filter((_, ind) => ind < 10)
-                                                .map((sug, ind) => ({
-                                                    key: ind,
-                                                    label: <div
-                                                        onClick={() => {
-                                                            window.location.href = `/result?${sug.type}=${sug.keyword}`;
-                                                        }}
-                                                        style={{ display: "flex" }}>
-                                                        <Tag
-                                                            color={getSuggestTypeColor(sug.type)}
-                                                            style={{ marginRight: "8px" }}>
-                                                            {translateSuggestType(sug.type)}
-                                                        </Tag>
-                                                        <Text>{sug.keyword}</Text>
-                                                    </div>
-                                                }))
-                                                .concat([{
-                                                    key: 10,
-                                                    label: <Text type="secondary">
-                                                        {"点击上方各推荐项将会使用高级搜索而非关键词搜索"}
-                                                    </Text>
-                                                }])
+                                            dropDownInner
                                         ) : ([{
                                             key: 0,
                                             label: <Text type="secondary">{"暂无搜索推荐"}</Text>
@@ -212,6 +286,7 @@ const ResultScreen: React.FC = () => {
                                 />}
                                 visible={dropDownVisible}>
                                 <Search
+                                    placeholder="请输入关键词"
                                     enterButton
                                     onSearch={(keyword: string) => {
                                         if (keyword === "") {
@@ -224,7 +299,7 @@ const ResultScreen: React.FC = () => {
                                     }}
                                     style={{
                                         height: "20px",
-                                        width: "50vw",
+                                        width: "40vw",
                                         margin: "12px",
                                     }}
                                     onChange={(event) => {
@@ -241,7 +316,7 @@ const ResultScreen: React.FC = () => {
                                     }}
                                 />
                             </Dropdown>
-                        </div>
+                        </div>)}
                         <Divider>{RESULT}</Divider>
                         <List
                             itemLayout="vertical"
