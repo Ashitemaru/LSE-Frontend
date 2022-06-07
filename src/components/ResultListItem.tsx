@@ -1,6 +1,5 @@
 import { Space, Typography } from "antd";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { INFO_ABSTRACT, NULL_ABSTRACT, READ_DETAIL } from "../constants/captions";
 import { StarOutlined } from "@ant-design/icons";
 import Abstract from "./Abstract";
@@ -15,8 +14,6 @@ interface ResultListItemProp {
 }
 
 const ResultListItem: React.FC<ResultListItemProp> = (props: ResultListItemProp) => {
-    const navigate = useNavigate();
-
     const IconText = ({ icon, text }: { icon: React.FC; text: string }) => (
         <Space>
             {React.createElement(icon)}
@@ -48,7 +45,7 @@ const ResultListItem: React.FC<ResultListItemProp> = (props: ResultListItemProp)
             actions={[
                 <a
                     key="read-more"
-                    onClick={() => navigate(`/detail/${props.item.id}`)}>
+                    onClick={() => window.open(`/detail/${props.item.id}`, "_blank")}>
                     {READ_DETAIL}
                 </a>,
                 <IconText
