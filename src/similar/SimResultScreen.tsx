@@ -1,4 +1,4 @@
-import { Button, Divider, Input, List, message, Pagination, Spin, Tag, Typography } from "antd";
+import { Button, Divider, Input, List, message, Pagination, Spin, Tag } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Md5 } from "ts-md5";
@@ -8,10 +8,6 @@ import { BACKEND_URL_PREFIX, TAG_COLOR } from "../constants/strings";
 import { uFetch } from "../util/network";
 import { CaseAbstract } from "../util/type";
 
-interface ExtendedAbstract extends CaseAbstract {
-    possibleCauses: string[],
-}
-
 /**
  * @note This component is similar to 'ResultScreen'
  * @todo Make a template of these two components
@@ -19,7 +15,7 @@ interface ExtendedAbstract extends CaseAbstract {
 const SimResultScreen = () => {
     const navigate = useNavigate();
 
-    const resultRef = useRef<ExtendedAbstract[]>([]);
+    const resultRef = useRef<[CaseAbstract[], string[]]>([[], []]);
     const [resultStamp, setStamp] = useState(new Date());
     const [refreshing, setRefreshing] = useState(false);
 
@@ -49,18 +45,19 @@ const SimResultScreen = () => {
                 } else if (res.count != total) {
                     message.error(UNUNIFIED_TOTAL_RES);
                     setRefreshing(false);
-                    resultRef.current = [];
+                    resultRef.current = [[], []];
                     return;
                 }
 
-                console.log(res);
-
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                resultRef.current = res.hits.map((val: any) => ({
-                    ...val,
-                    id: parseInt(val.id, 10),
-                    score: parseFloat(val.score),
-                }) as ExtendedAbstract);
+                resultRef.current = [
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    res.hits.map((val: any) => ({
+                        ...val,
+                        id: parseInt(val.id, 10),
+                        score: parseFloat(val.score),
+                    }) as CaseAbstract),
+                    res.possibleCauses as string[]
+                ];
 
                 setStamp(new Date());
                 setRefreshing(false);
@@ -119,33 +116,29 @@ const SimResultScreen = () => {
                                 {"回到主页"}
                             </Button>    
                         </div>
+                        {(resultRef.current[1] || []).length > 0 && <>
+                            <Divider>{"高可能性案由"}</Divider>
+                            <div style={{ marginLeft: "12px", display: "flex", flexDirection: "row" }}>
+                                {resultRef.current[1].map((cause, ind) => (
+                                    <div
+                                        key={ind}
+                                        onClick={() => window.location.href = `/result?cause=${cause}`}>
+                                        <Tag
+                                            color={
+                                                TAG_COLOR[parseInt(Md5.hashStr(cause), 16) % TAG_COLOR.length]
+                                            }>
+                                            {cause}
+                                        </Tag>
+                                    </div>
+                                ))}
+                            </div>
+                        </>}
                         <Divider>{RESULT}</Divider>
                         <List
                             itemLayout="vertical"
-                            dataSource={resultRef.current}
-                            renderItem={(item: ExtendedAbstract) => (
-                                <ResultListItem
-                                    item={item}
-                                    footer={
-                                        (item.possibleCauses || []).length > 0 && <>
-                                            <Typography>
-                                                <Typography.Title level={5}>
-                                                    {"可能案由"}
-                                                </Typography.Title>
-                                            </Typography>
-                                            {item.possibleCauses.map((cause, ind) => (
-                                                <Tag
-                                                    key={ind}
-                                                    color={
-                                                        TAG_COLOR[parseInt(Md5.hashStr(cause), 16)
-                                                            % TAG_COLOR.length]
-                                                    }>
-                                                    {cause}
-                                                </Tag>
-                                            ))}
-                                        </>
-                                    }
-                                />
+                            dataSource={resultRef.current[0]}
+                            renderItem={(item: CaseAbstract) => (
+                                <ResultListItem item={item} />
                             )}
                             style={{
                                 margin: "18px",

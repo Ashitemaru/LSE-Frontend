@@ -81,8 +81,10 @@ const ResultScreen: React.FC = () => {
                 }
             }
 
-            if (keyFound) type = SearchType.ADVANCED;
-            else {
+            if (keyFound) {
+                type = SearchType.ADVANCED;
+                setAdvanced(true);
+            } else {
                 message.error("URL 参数不合法，请重试");
                 navigate("/");
                 return;
@@ -208,6 +210,7 @@ const ResultScreen: React.FC = () => {
                         <div style={{ margin: "12px", marginBottom: "0px" }}>
                             <Segmented
                                 options={["关键词搜索", "高级搜索"]}
+                                value={advancedSearch ? "高级搜索" : "关键词搜索"}
                                 onChange={(tip) => setAdvanced(tip === "高级搜索")}
                             />
                             <Button
