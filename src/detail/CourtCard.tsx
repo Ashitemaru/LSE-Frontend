@@ -47,6 +47,7 @@ const CourtCard = ({ item }: { item: any }) => {
                     })()}
                 />}
             </Typography>
+            {item.name && <a href={`/result?court=${item.name}`}>{"搜索该法院"}</a>}
         </Card>
     );
 };

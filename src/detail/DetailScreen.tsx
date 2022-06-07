@@ -109,16 +109,19 @@ const DetailScreen: React.FC = () => {
                                     <PersonList
                                         list={detailRef.current?.persons?.prosecutors || []}
                                         isRepresentative={false}
+                                        isJudge={false}
                                     />
                                     <Divider>{"应诉方"}</Divider>
                                     <PersonList
                                         list={detailRef.current?.persons?.defendants || []}
                                         isRepresentative={false}
+                                        isJudge={false}
                                     />
                                     <Divider>{"代理人"}</Divider>
                                     <PersonList
                                         list={detailRef.current?.persons?.representatives || []}
                                         isRepresentative={true}
+                                        isJudge={false}
                                     />
                                 </div>
                             </TabPane>
@@ -217,6 +220,7 @@ const DetailScreen: React.FC = () => {
                                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     })) as any[]}
                                     isRepresentative={false}
+                                    isJudge={true}
                                 /> : <Empty />}
                             </TabPane>
                             <TabPane key={8} tab="文书完整内容">

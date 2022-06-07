@@ -13,6 +13,7 @@ const DocumentCard = ({ item }: { item: any }) => (
         <Typography style={{ marginTop: "12px" }}>
             {item.name && <KVPair k="文书详细类型" v={item.name} />}
         </Typography>
+        {item.type && <a href={`/result?type=${item.type}`}>{"搜索该文书类型"}</a>}
     </Card>
 );
 

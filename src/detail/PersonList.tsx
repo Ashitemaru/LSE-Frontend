@@ -8,7 +8,7 @@ import { getBackgroundColor } from "../util/avatarColor";
 const { Text, Title, Paragraph } = Typography;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PersonList = ({ list, isRepresentative }: { list: any[], isRepresentative: boolean }) => {
+const PersonList = ({ list, isRepresentative, isJudge }: { list: any[], isRepresentative: boolean, isJudge: boolean }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wrap = (o: any) => (
         Array.isArray(o) ? o : [o]
@@ -22,13 +22,20 @@ const PersonList = ({ list, isRepresentative }: { list: any[], isRepresentative:
                 <List.Item>
                     <List.Item.Meta
                         avatar={
-                            <Avatar
-                                style={{
-                                    color: "white",
-                                    background: getBackgroundColor(person.name || "N")
+                            <div
+                                onClick={() => {
+                                    window.location.href = `/result?${
+                                        isJudge ? "judge" : "person"
+                                    }=${person.name}`;
                                 }}>
-                                {person.name === undefined ? "未知" : person.name[0]}
-                            </Avatar>
+                                <Avatar
+                                    style={{
+                                        color: "white",
+                                        background: getBackgroundColor(person.name || "N")
+                                    }}>
+                                    {person.name === undefined ? "未知" : person.name[0]}
+                                </Avatar>
+                            </div>
                         }
                         title={person.name === undefined ? "未知名称" : person.name}
                         description={person.status || "暂无相关身份信息"}

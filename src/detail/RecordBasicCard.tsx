@@ -27,6 +27,7 @@ const RecordBasicCard = ({ item }: { item: any }) => (
             {item.acceptDate && <KVPair k="受理日期" v={item.acceptDate} />}
             {item.tribunal && <KVPair k="审判组织" v={item.tribunal} />}
         </Typography>
+        {item.cause && <a href={`/result?cause=${item.cause}`}>{"搜索该案由"}</a>}
         <Divider />
         {(() => {
             if (item.stage === 1) {

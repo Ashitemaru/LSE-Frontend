@@ -21,6 +21,7 @@ const CaseCard = ({ item }: { item: any }) => (
             {item.name && <Divider />}
             {item.name && <KVPair k="案件案号【全称】" v={item.name} />}
         </Typography>
+        {item.year && <a href={`/result?year=${item.year}`}>{"搜索该案件年份"}</a>}
     </Card>
 );
 

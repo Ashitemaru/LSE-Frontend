@@ -19,44 +19,61 @@ const Abstract: React.FC<AbstractProps> = (props: AbstractProps) => (
     <List.Item actions={props.actions} style={props.style}>
         <List.Item.Meta
             avatar={
-                <Avatar
-                    style={{
-                        color: "white",
-                        background: getBackgroundColor(
-                            props.item?.court?.province || "N"
-                        )
-                    }}>
-                    {props.item?.court?.province || UNKNOWN_PROVINCE}
-                </Avatar>
+                <div onClick={() => window.location.href = `/result?province=${props.item?.court?.province}`}>
+                    <Avatar
+                        style={{
+                            color: "white",
+                            background: getBackgroundColor(
+                                props.item?.court?.province || "N"
+                            )
+                        }}>
+                        {props.item?.court?.province || UNKNOWN_PROVINCE}
+                    </Avatar>
+                </div>
             }
             title={
                 (props.item?.court?.name || UNKNOWN_COURT_NAME) +
-                `【${props.item?.document?.name || UNKNOWN_DOCUMENT_NAME}】`
+                    `【${props.item?.document?.name || UNKNOWN_DOCUMENT_NAME}】`
             }
             description={props.item?._case?.name || UNKNOWN_CASE_NAME}
         />
         <Descriptions bordered size="small" layout="vertical">
             <Descriptions.Item label={PROSECUTOR}>
                 {(props.item?.persons?.prosecutors || []).length ? (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     props.item?.persons?.prosecutors.map((person: any, ind: number) => (
-                        <Tag key={ind} color="green">{person?.name || UNKNOWN_NAME}</Tag>
+                        <Tag
+                            key={ind}
+                            color="green"
+                            onClick={() => window.location.href = `/result?person=${person?.name}`}>
+                            {person?.name || UNKNOWN_NAME}
+                        </Tag>
                     ))
                 ) : NO_PROSECUTOR}
             </Descriptions.Item>
             <Descriptions.Item label={DEFENDANT}>
                 {(props.item?.persons?.defendants || []).length ? (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     props.item?.persons?.defendants.map((person: any, ind: number) => (
-                        <Tag key={ind} color="red">{person?.name || UNKNOWN_NAME}</Tag>
+                        <Tag
+                            key={ind}
+                            color="red"
+                            onClick={() => window.location.href = `/result?person=${person?.name}`}>
+                            {person?.name || UNKNOWN_NAME}
+                        </Tag>
                     ))
                 ) : NO_DEFENDANT}
             </Descriptions.Item>
             <Descriptions.Item label={REPRESENTATIVE}>
                 {(props.item?.persons?.representatives || []).length ? (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     props.item?.persons?.representatives.map((person: any, ind: number) => (
-                        <Tag key={ind} color="blue">{person?.name || UNKNOWN_NAME}</Tag>
+                        <Tag
+                            key={ind}
+                            color="blue"
+                            onClick={() => window.location.href = `/result?person=${person?.name}`}>
+                            {person?.name || UNKNOWN_NAME}
+                        </Tag>
                     ))
                 ) : NO_REPRESENTATIVE}
             </Descriptions.Item>

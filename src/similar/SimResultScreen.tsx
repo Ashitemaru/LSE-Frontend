@@ -53,6 +53,8 @@ const SimResultScreen = () => {
                     return;
                 }
 
+                console.log(res);
+
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 resultRef.current = res.hits.map((val: any) => ({
                     ...val,

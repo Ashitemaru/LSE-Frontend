@@ -15,9 +15,8 @@ const IntroScreen: React.FC = () => {
             alignItems: "center",
             flexDirection: "column",
         }}>
-            Welcome to LSE!
             <Search
-                placeholder="Input keyword to search"
+                placeholder="请输入查询关键词"
                 enterButton
                 onSearch={(keyword: string) => {
                     if (keyword === "") {
@@ -26,6 +25,7 @@ const IntroScreen: React.FC = () => {
                     }
                     navigate(`/result?keyword=${keyword}`);
                 }}
+                style={{ maxWidth: "40vw" }}
             />
         </div>
     );
