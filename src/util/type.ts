@@ -156,10 +156,17 @@ export interface File {
     detail?: Detail; // 案件基本情况
     analysis?: Analysis; // 裁判分析过程
     result?: Result; // 判决结果
+    resultOneWord?: string; // 判决结果标签
     timeline: Event[]; // 时间线
     footer?: Footer; // 文尾
-    featureVector: number[]; // 文本特征向量
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recommend: any[], // 相关推荐案例
+    cause?: string; // 案由，前端不用
+    personSet: string[]; // 当事人集合（列表），前端不用
+    referenceSet: string[]; // 引用条目集合（列表），前端不用
+    featureVector: number[]; // 文本特征向量，前端不用
 }
+
 
 export interface CaseAbstract {
     id: number, // 该案件序列号

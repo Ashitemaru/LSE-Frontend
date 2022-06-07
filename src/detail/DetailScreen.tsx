@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Abstract from "../components/Abstract";
 import KVPair from "../components/KVPair";
+import ResultListItem from "../components/ResultListItem";
 import { FAIL_GET_DETAIL, SUCCESS_GET_DETAIL, UNDEF_URL_PARAM_ID } from "../constants/captions";
 import { BACKEND_URL_PREFIX } from "../constants/strings";
 import { parseCHNDate } from "../util/date";
@@ -233,6 +234,15 @@ const DetailScreen: React.FC = () => {
                                     </Text>}
                                 </Typography>
                             </TabPane>
+                            {(detailRef.current?.recommend || []).length > 0 && <TabPane key={9} tab="相关案例推荐">
+                                <List
+                                    itemLayout="vertical"
+                                    dataSource={detailRef.current?.recommend}
+                                    renderItem={(_item) => <ResultListItem
+                                        item={_item}
+                                    />}
+                                />
+                            </TabPane>}
                         </Tabs>
                     </div >
                 )
